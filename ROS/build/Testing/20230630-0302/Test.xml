@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Site BuildName="(empty)"
+	BuildStamp="20230630-0302-Experimental"
+	Name="Property-of-Paulo"
+	Generator="ctest-3.16.3"
+	CompilerName="/usr/lib/ccache/c++"
+	CompilerVersion="9.4.0"
+	OSName="Linux"
+	Hostname="Property-of-Paulo"
+	OSRelease="5.15.0-76-generic"
+	OSVersion="#83~20.04.1-Ubuntu SMP Wed Jun 21 20:23:31 UTC 2023"
+	OSPlatform="x86_64"
+	Is64Bits="1"
+	VendorString="GenuineIntel"
+	VendorID="Intel Corporation"
+	FamilyID="6"
+	ModelID="140"
+	ProcessorCacheSize="8192"
+	NumberOfLogicalCPU="8"
+	NumberOfPhysicalCPU="4"
+	TotalVirtualMemory="7628"
+	TotalPhysicalMemory="7665"
+	LogicalProcessorsPerPhysical="2"
+	ProcessorClockFrequency="2859.76"
+	>
+	<Testing>
+		<StartDateTime>Jun 30 13:02 AEST</StartDateTime>
+		<StartTestTime>1688094172</StartTestTime>
+		<TestList/>
+		<EndDateTime>Jun 30 13:02 AEST</EndDateTime>
+		<EndTestTime>1688094172</EndTestTime>
+		<ElapsedMinutes>0</ElapsedMinutes>
+	</Testing>
+</Site>

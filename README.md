@@ -1,282 +1,134 @@
-# Sawyer Velocity Control
+# OpenXR: Eye-in-Hand Sawyer Teleoperation 
 
-![Sawyer Glam Shot](images/glam-shot-800x800.jpg)
+![ROS](https://img.shields.io/badge/ros-noetic-brightgreen)
+
+---
+
+<img src="ROS/images/Teleop_setup.png" alt="Eye-in-Hand VR Setup" width="400" height="600">
+
+## Required Packages
+
+#### ROS
+[ROS-TCP-Endpoint](https://github.com/Unity-Technologies/ROS-TCP-Endpoint) - ROS package used to create an endpoint to accept ROS messages sent from a Unity scene using the ROS TCP Connector scripts.
+[intera_common](https://github.com/RethinkRobotics/intera_common) - ROS Messages and tools description files for Rethink Robotics robots.    
+[intera_sdk](https://github.com/RethinkRobotics/intera_sdk) - Software Development Kit and Interface for Rethink Robotics robots.  
+[sawyer_robot](https://github.com/RethinkRobotics/sawyer_robot) - Sawyer-specific components for the Sawyer robot for use with the [`intera_sdk`](https://github.com/RethinkRobotics/intera_sdk).  
+[sns_ik](https://github.com/RethinkRobotics-opensource/sns_ik) - Saturation in the Null Space (SNS) Inverse Kinematic Library.  
+[realsense2_camera](https://github.com/IntelRealSense/realsense-ros/tree/ros2-development/realsense2_camera) (optional) - Intel(R) RealSense(TM) ROS Wrapper for Depth Camera. Use whatever package that is compatible with the specific camera being used.
+
+#### Unity
+[ROS-TCP-Connector](https://github.com/Unity-Technologies/ROS-TCP-Connector) - Unity package to set the communication from Unity to ROS or vice-versa for manipulating ROS Messages.     
+[URDF-Importer](https://github.com/Unity-Technologies/URDF-Importer) - Unity package that allows you to import a robot defined in URDF format in a Unity scene.     
+[OpenXR Plugin](https://docs.unity3d.com/Packages/com.unity.xr.openxr@1.6/manual/index.html) - Standard developed by Khronos that aims to simplify AR/VR development.
+
+To use the real Sawyer, the ROS workstation can be setup with the following [instructions](https://support.rethinkrobotics.com/support/solutions/articles/80000980134-workstation-setup).
 
 ## Summary
-This package is used to apply task-space velocity control to Rethink Robotic's Sawyer
-to follow a specified trajectory.
+This package is used to apply task-space velocity dynamics with virtual-reality inputs from a [Oculus Quest 2](https://www.meta.com/au/quest/products/quest-2/?utm_source=www.google.com&utm_medium=oculusredirect) to teleoperate Rethink Robotic's Sawyer to follow a specified trajectory.
 
-Launch files in this package are set up such that one can either simulate velocity
-control using RViz, or apply velocity control to a Sawyer robot in real world applications.
+Launch files in this package are set up such that one can utilise Unity's XR Library to augment VR functionalities and remotely control a real robot in real-time.
 
-This package can also make use of an ATI Force/Torque sensor attached to Sawyer's
-end effector. Readings from this sensor are fed into a control loop which generates
-trajectories. These trajectories are used to approximate the behaviors of true interaction
-and hybrid motion-force controllers.
+The underlying concepts behind this velocity control approach are primarily referenced from the [sawyer_velctrlsim](https://github.com/michaeltobia/sawyer_velctrlsim) package, along with the teleoperation extension detailed in my [portfolio](https://portfolium.com.au/project/draft/70958).
 
-If you are interested in learning about my approach to this problem and the
-concepts behind its controls, please take a look at my portfolio post on this
-project here.
+## Instructions For Use:
+Ideally you want to have two separate devices: one Linux device running the `ROS` functionalities which entail the Sawyer's control, and another Windows running `Unity` augmenting the virtual-reality capabilities. Running these simultaneously in a virtual machine is also possible, but I would heavily recommend having a separate device for each to prevent delays and optimise performance.
 
-<!-- ADD LINK TO PORTFOLIO POST!!  -->
+**<u>Key</u>**: Windows **[W]**, Linux **[L]**
 
+1. Install [Unity Hub](https://unity.com/download) (at least version `2021.3.21f1`) with a Unity account. **[W]**
+2. Clone the repository using [git](https://git-scm.com/download/linux) or download this project as a zip file. Extract the `ROS` folder to your ROS (or catkin) workspace, and the `Unity` folder to the directory with your Unity projects. **[W]** **[L]**
+3. Add the project from your Unity projects' directory in Unity Hub, by selecting `Add Project from Disk` from the drop-down menu and navigating to the extracted files. Open the project. **[W]**
+4. Follow all of the instructions [here](https://developer.oculus.com/documentation/unity/unity-gs-overview/) to setup Unity with the Oculus and enable developer mode on the Meta Quest 2. **[W]**
+5. The Meta Quest can be run using [Air Link](https://www.meta.com/en-gb/help/quest/articles/headsets-and-accessories/oculus-link/connect-with-air-link/) or [Quest Link](https://www.meta.com/en-gb/help/quest/articles/headsets-and-accessories/oculus-link/connect-link-with-quest-2/). The latter is recommended using The Link cable, unless you have a good Wi-Fi connection to use Air Link. **[W]**
+6. Set up the [Guardian Boundary](https://www.youtube.com/watch?v=GojevL05Avw) of the Meta Quest to match closely to the working envelope of the robot. Ensure that the base height of the boundary is level with Sawyer's base. **[W]**
+
+<img src="ROS/images/VR_area.png" alt="VR Boundary Setup" width="300" height="500">
+
+7. In `Robotics` -> `ROS Settings`, set the ROS IP Address to match that from your Linux device and the ROS Port to any value you wish to set your connection. To check the IP on Linux, run `hostname -I` in your Terminal. **[W]**
+8. On the ROS side, make sure that everything is configured within the intera workspace previously set up (accessed by running `./intera.sh` within the corresponding ROS workspace). First, configure the ROS TCP endpoint package by running `roslaunch ros_tcp_endpoint endpoint.launch tcp_ip:=your_ip tcp_port:=your_port`. **[L]**
+9. With the VR set up, launch [Quest Link](https://www.meta.com/help/quest/articles/headsets-and-accessories/oculus-link/connect-link-with-quest-2/) and run the Unity game to establish the TCP connection and communicate the VR data as ROS Messages. **[W]**
+
+<img src="ROS/images/VR_scene.png" alt="Unity VR Scene" width="700" height="350">
+
+10. Run the main [launch](https://github.com/paulonhantumbojr/sawyer_vr_teleop/blob/master/launch/vel_ctrl.launch) file and set the corresponding mode to your setup, either `sim` or `vr`. The full declaration is `roslaunch sawyer_vr_teleop vel_ctrl.launch mode:=[mode here]`. The function of these modes is described in [package details](#Package-Details). **[L]**
+11. Set up your dedicated camera sensor in `ROS` and ensure that its corresponding topic is instantiated in the Unity element that displays the image textures. **[W]**
+
+![Screen Texture Components](ROS/images/CamTex.png)
+
+**Note:** To ensure that the robot state in Unity matches with the one in testing (depending on the mode), you will have to manually declare the topics inside the `JointEmulator.cs`. **[W]**
+
+![Joint State Components](ROS/images/JointStateEmulator.png)
 
 ## Package Details
 ### Launch Files
-#### `joint_states_gui.Launch`
-* Loads Sawyer's URDF from xacro files found in the `sawyer_description` package.
-Starts the `joint_state_publisher` with an interactive gui along with RViz.
-Used as a check to make sure things are installed properly. Also helpful for
-quickly visualizing Sawyer in various configurations.
 
-#### `rand_ref_vel_ctrl.launch`
-* Begins by loading a reference sawyer with a randomly chosen configuration under
-the name space `ref_sawyer`. This starts the `ref_js_randomizer` node which
-publishes the randomized reference `JointState` message from `ref_sawyer`.
-The `ref_vel_ctrl` node is then started in the `main_sawyer` name space. This
-node produces a separate simulated sawyer in its home configuration.
+#### `vel_ctrl.launch`
 
-* Next, a fixed transform between the `ref_sawyer` base frame and the `main_sawyer`
-base is published on a `static_transform_publisher` node.
+* This launch file contains the launch parameters for disctinct teleoperation modes with the Rethink Robotics Sawyer. One where a simulation of the robot is set up solely in the Rviz (`sim`), another where a real robot is controlled by the virtual-reality controller manipulators (`vr`). The latter is set up in tandem with the simulator separately as a predefined configuration of a simulation tends to mess with the RobotModel of Sawyer when instantiated multiple times. The primary difference between these is found within `traj_gen_sim.py` and `traj_gen_vr.py` where the trajectory for the robot to follow is published. The trajectory is generated as a `TransformStamped` message published on the `/desired_trajectory` by the `/ref_trajectory_[mode]` nodes.
 
-* Finally, RViz is started. In RViz, the slightly transparent `ref_sawyer` can be seen in its randomly
-selected configuration. `main_sawyer` is shown superimposed on `ref_sawyer` without
-transparency. Upon user input, the `main_sawyer/ref_vel_ctrl` node begins a velocity
-control loop with drives `main_sawyer`'s end-effector to `ref_sawyer`'s randomly
-selected end effector pose. The following figure shows a screencapture of this launch file running.
+##### `sim`
+* `sim_vel_ctrl.py` calculates the joint velocities necessary to drive the simulated end effector to the most recent message published on topic `/desired_trajectory`. It then publishes these commands as a `intera_core_msgs/JointCommand` message on the `/robot/limb/right/joint_command` topic. This is the same topic and message type used on Sawyer in real world use.
 
-![rand_ref_vel_ctrl.launch running](images/ref_ctrl_screencap.png)
+* The simulated nature of this process means we have to calculate Sawyer's joint states from the velocity commands, since there is no real Sawyer to retrieve the joint states from. This is handled by the `vel_ctrl_sim_interface` node. Found in `vel_ctrl_sim_interface.py`, this node unpacks the `intera_core_msgs/JointCommand` message found on the `/robot/limb/right/joint_command` topic. It then interpolates the simulated Sawyer's joint positions and publishes them on the `/joint_states` topic. This is the `/joint_states` topic that the `robot_state_publisher` subscribes to for `tf` calculations.
 
-* The nodes used in this launch file were used as a frame work for the remainder of the
-project.
+* The end result of running this launch file is an RViz instance where a simulated Sawyer can be seen following the trajectory specified in `traj_gen_sim.py`.
 
-#### `sim_vel_ctrl.launch`
+##### `vr`
+* Combined non-simulation and simulation mode that drives the real-world  Sawyer's end effector to the trajectory specified by the VR headset controller in `traj_gen_vr.py`. An additional functionality is embedded to control the parallel gripper.
 
-* This launch file simulates velocity control of Rethink Robotics Sawyer. The control loop,
-found in `sim_vel_ctrl.py`, subscribes to a `TransformStamped` message published on the
-`/desired_trajectory` by the `/ref_trajectory` node. The trajectory published by this node
-can be specified in `traj_gen.py`, as described in more detail further down.
+* A fair amount of cautious respect should be given when running Sawyer in velocity control mode. The velocity limits on Sawyer's joints are surprisingly high and can cause damage or injury if this launch file is used with out some level of care. To prevent damage, joint velocity commands can be limited in `sawyer_vel_ctrl.py` [here](https://github.com/michaeltobia/sawyer_velctrlsim/blob/0ab7adfe4be4a372230d1d4fa44a1a1a1e5e1849/src/sawyer_vel_ctrl.py#L108-L111). Joint speed can also be limited by reducing the proportional control coefficient `self.Kp` in `sawyer_vel_ctrl.py`. This is not a direct limit, but it will reduce the aggression of the controller resulting in slower trajectory tracking. More information about Sawyer's joint control modes can be found on the Intera SDK site [here](http://sdk.rethinkrobotics.com/intera/Arm_Control_Systems#Joint_Control_Modes).
 
-* `sim_vel_ctrl.py` calculates the joint velocities necessary to drive the simulated
-end effector to the most recent message published on topic `/desired_trajectory`.
-It then publishes these commands as a `intera_core_msgs/JointCommand` message on
-the `/robot/limb/right/joint_command` topic. This is the same topic and message
-type used on Sawyer in real world use.
+* This mode runs three nodes:
+ 1. **`sawyer_vel_ctrl`**: Control loop. Takes drives Sawyer's end effector to the most recently received `TransformStamped` message published on the `/desired_trajectory` topic. This node stores Sawyer's joint states every time it is published over the `/robot joint_states` message. Forward kinematics is then used to calculate the current end effector position. Finally, a velocity command is calculated from the error between the current end effector position and the desired end effector position. This velocity command is send as a `intera_core_msgs/JointCommand` over the `/robot/limb/right/joint_command` topic. These commands are then processed by Saywer's internal `realtime_loop` to send velocity commands to Sawyer's joints.
 
-* The simulated nature of this process means we have to calculate Sawyer's joint states
-from the velocity commands, since there is no real Sawyer to retrieve the joint states from.
-This is handled by the `vel_ctrl_sim_interface` node. Found in `vel_ctrl_sim_interface.py`,
-this node unpacks the `intera_core_msgs/JointCommand` message found on the
-`/robot/limb/right/joint_command` topic. It then interpolates the simulated
-Sawyer's joint positions and publishes them on the `/joint_states` topic. This is
-the `/joint_states` topic that the `robot_state_publisher` subscribes to for tf calculations.
+ 2. **`ref_trajectory_vr`**: Desired trajectory generator. Generates `TransformStamped` messages according to the specified task-space trajectory in `traj_gen.py` and publishes them to the `/desired_trajectory` topic. 
 
-* The end result of running this launch file is an RViz instance where a simulated
-Sawyer can be seen following the trajectory specified in `traj_gen.py`
+ 3. **`sdk_gripper_vr`**: Gripper Control. Takes input from the Quest 2 controllers and controls the opening, closing, calibrating, and stopping functionalities of the electric parallel gripper mounted at Sawyer's end-effector. It allows the control of the gripper for picking applications while the arm is simultaneously being controller to generate trajectories.
 
-* Though unnecessary for real world use, this launch file is incredibly useful
-for visualizing the velocity control loop when used with `rqt_graph`. Using `rqt_graph`
-on a real world Sawyer is not very useful because of the sheer number of running
-nodes and topics. Here, `rqt_graph` presents a clean representation of the simulated
-control loop (and approximation of the real world control loop) as seen below.
-
-![and rqt_graph view of sim_vel_ctrl.launch](images/sim_vel_ctrl_rqt_graph.png)
-
-#### `sawyer_vel_ctrl.launch`
-
-* This launch file is the first non-simulation launch file in this package. Running
-this launch file while connected to Sawyer will drive the real-world Sawyer's end effector
-to the trajectory specified in `traj_gen.py`
-
-* A fair amount of cautious respect should be given when running Sawyer in velocity control
-mode. The velocity limits on Sawyer's joints are surprisingly high and can cause damage
-or injury if this launch file is used with out some level of care. To prevent damage, joint velocity
-commands can be limited in `sawyer_vel_ctrl.py` [here](https://github.com/michaeltobia/sawyer_velctrlsim/blob/0ab7adfe4be4a372230d1d4fa44a1a1a1e5e1849/src/sawyer_vel_ctrl.py#L108-L111). Joint speed can also be limited by reducing the proportional control
-coefficient `self.Kp` in `sawyer_vel_ctrl.py`. This is not a direct limit, but it will reduce the
-aggression of the controller resulting in slower trajectory tracking.
-
-* More information about Sawyer's joint control modes can be found on the Intera SDK site [here](http://sdk.rethinkrobotics.com/intera/Arm_Control_Systems#Joint_Control_Modes)
-
-* This launch file only runs two nodes
- 1. `sawyer_vel_ctrl`: Control loop. Takes drives Sawyer's end effector to the most recently
-received `TransformStamped` message published on the `/desiired_trajectory` topic. This node stores
-Sawyer's joint states every time it is published over the `/robot/joint_states` message. Forward kinematics
-is then used to calculate the current end effector position. Finally, a velocity command
-is calculated from the error between the current end effector position and the desired
-end effector position. This velocity command is send as a `intera_core_msgs/JointCommand`
-over the `/robot/limb/right/joint_command` topic. These commands are then processed by Saywer's
-internal `realtime_loop` to send velocity commands to Sawyer's joints.
-
- 2. `ref_trajectory`: Desired trajectory generator. Generates `TransformStamped` messages
- according to the specified task-space trajectory in `traj_gen.py` and publishes them to the
- `/desired_trajectory` topic. It should be noted that this is the same `traj_gen.py` file used
- in `sim_vel_ctrl.launch`. This makes it very easy to test a trajectory using `sim_vel_ctrl.launch`
- before running `sawyer_vel_ctrl.launch`. **I highly recommend running `sim_vel_ctrl.launch`
- any time `traj_gen.py` is changed to prevent accidents**
-
-* Video of this launch file running has been taken and will be uploaded in the very near future.
-That said, running this launch file while connected to Sawyer will cause Sawyer to follow the
-trajectory specified in `traj_gen.py` "exactly" (approximately) the same way it does in `sim_vel_ctrl.launch`.
-
-#### `unidirectional_force_control.launch`
-
-* This node is used to approximate interaction control on Sawyer. Using a force
-sensor, this launch file simulates a spring between the prescribed
-resting position of Saywer and the error induced by interacting with (pulling or pushing)
-Sawyer's end effector along the x-axis (the base's x-axis, not the end effector's).
-
-* This is another non-simulation launch file in this package. This launch file makes
-use of an an ATI Axia 80 Force/Torque sensor attached to Sawyer's end effector. Custom
-hardware is required to attach the sensor to Sawyer's wrist, as can be seen in the
-following figure.
-<!-- NEED AN IMAGE HERE -->
-
-* This launch file runs four (4) nodes
- 1. `netft_node`: Used to connect to the ATI Axia 80 Sensor over a network connection. Publishes
- raw `WrenchStamped` data from the sensor over the `/netft_data` topic.
-
- 2. `ft_bias_node`: Essentially a pass-through node, stores all `WrenchStamped`
- messaged received over the `/netft_data`, subtracts a bias, then publishes the biased
- data as `WrenchStamped` messages over the `/biased_ft_data` topic. Also applies a
- moving average filer. Uses custom service `bias_ft_data`
- with custom `Bias.srv` service message. When this service is called, the current sensor readings are
- stored in the `ft_bias_node` under `self.biased_data`. This is the bias subtracted from the sensor data.
- This service should be called as soon as possible after running this launch file and anytime the end
- effector is not being interacted with or anytime it is acting strangely.
-
- 3. `sawyer_vel_ctrl`: The exact same control loop used by `sawyer_vel_ctrl.launch`.
- This is the same here because force control is applied through the trajectory generation step; motion
- control, when doing force control in this manner, remains unchanged.
-
- 4. `ref_trajectory`: While under the same name as the node in `sawyer_vel_ctrl.launch`,
- this node is found in the `force_ctrl_traj_gen.py` file. This file is based off the `traj_gen.py`
- file, the difference being that the `x_d` portion of the trajectory is based off the error
- between the the desired force along the x-axis and the force measured by the
- end-effector-attached force/torque sensor. This results in an approximation of interaction
- control, where the error in force is driven down by adding an offset to the trajectory.
-
-* Interestingly, having the force control loop publish a trajectory to the velocity controller
- allows many different types of rough interaction control. Simply flipping the sign on
- `f_x_err` in `force_ctrl_traj_gen.py` will cause the end effector to avoid interaction by
- attempting to zero-out the force measured by the force/torque sensor, instead of simulating
- a spring pulling against this interaction.
-
-* The repeated use of "approximate" in this package is no mistake. This launch file
- represents a purely kinematic velocity control loop wrapped around a force control loop.
- The force control is approximate because there is no system dynamic information in the controls.
- As such, Sawyer may respond to interaction in odd ways, such as pulling or pushing in
- a direction not opposite to the applied force. It does this because the velocity
- control loop naively tries to drive the end effector to the desired transform any
- way possible. In other words, while trying to reduce the force error, Sawyer is also
- attempting to reduce the end effector position and rotation error induced by interacting
- with it. Please see the Future Work and Possible Improvements section down below for
- methods on approaching this issue.
+* A demonstration video is showcased [here](). That said, running this launch file while connected to Sawyer will cause Sawyer to follow the trajectory specified in `traj_gen.py` approximately"exactly  the same way it does in `sim_vel_ctrl.launch`.
 
 ### Script File Details
 
-#### `force_ctrl_traj_gen.py`
-* Used in `unidirectional_force_control.launch`
-* Subscribes to end effector attached force/torque sensor data
-* Calculates trajectories for the velocity controller based on desired force control behaviors
-* Trajectories are specified relative to Sawyers base frame. Comments in the
-[trajectory() method](https://github.com/michaeltobia/sawyer_velctrlsim/blob/ab5f22de727a5c1a07d79cf15d9931acbb78e38b/src/force_ctrl_traj_gen.py#L42) indicate how trajectory sign corresponds to end effector movement.
-* This file is in desperate need of organization, which will be addressed in the very near future
-* Control gains can and desired end effector wrench can be easily changed [here](https://github.com/michaeltobia/sawyer_velctrlsim/blob/ab5f22de727a5c1a07d79cf15d9931acbb78e38b/src/force_ctrl_traj_gen.py#L28), but I would recommend doing so with caution. Non-zero desired
-wrenchs have contradictory effects on the system, which tries both to apply the
-non-zero wrench while also keeping the end effector stationary. Also, derivative
-control on a force sensor is not very useful due to magnitude of noise, and was
-experimentally included.
-* Desired end effector rotation and position can also be changed. It is entirely
-possible to have these change over time, as the current rospy time is passed into
-the trajectory generator as a usable argument. This is useful for following a
-Cartesian trajectory while applying force control in the perpendicular axis, for
-applications like surface tracking. E.g. force control can be specified in the
-`x_d` position while a surface scanning trajectory is specified in `y_d` and `z_d`.
-
-
-#### `ft_bias_node.py`
-* Used in `unidirectional_force_control.launch`
-* Subscribes to the raw force/torque sensor readings
-* Applies a 6 sample moving average filter
-* Uses the `bias_ft_data` service to apply a bias to the sensor, effectively
-zeroing-out the sensor. Helps to counteract drift **(sensor has least drift
-when running at 24V)**
-
-#### `io_util.py`
-* Used by `rand_ref_vel_ctrl.launch` to catch user input and start the velocity control loop
+#### `gripper_ctrl.py`
+* Used by `vel_ctrl.launch`.
+* Maps the functionality of the electric parallel gripper to the Oculus controllers.
 
 #### `modern_robotics.py`
-* Used by everything
+* Used by in `sim_vel_ctrl.py` and `sawyer_vel_ctrl.py` for algebraic manipulation.
 * Library for Modern Robotics by Dr. Kevin Lynch.
 
-#### `ref_rand_joint_state_pub.py`
-* Used in `rand_ref_vel_ctrl.launch`
-* Publishes the random joint states used to calculate the desired end effector position
-that the velocity control tries to reach on user input
-
-#### `ref_vel_ctrl.py`
-* Used in `rand_ref_vel_ctrl.launch`
-* Drives the simulated sawyer to the desired end effector position prescribed by
-`ref_rand_joint_state_pub.py`
-* Publishes joint positions interpolated from the calculated velocity commands
-
 #### `sawyer_MR_description.py`
-* Used in control calculations
-* Sawyer's kinematic description in a format that the Modern Robotics library
-in `modern_robotics.py` can understand.
+* Used in `sim_vel_ctrl.py` and `sawyer_vel_ctrl.py` for control calculations.
+* Sawyer's kinematic description in a format that the Modern Robotics library in `modern_robotics.py` can understand.
 
 #### `sawyer_vel_ctrl.py`
-* Used in the real world control launch files `sawyer_vel_ctrl.launch` and
-`unidirectional_force_control.launch`
-* Control gains can be adjusted in the code [here](https://github.com/michaeltobia/sawyer_velctrlsim/blob/master/src/sawyer_vel_ctrl.py#L39-L41)
-* As mentioned before, joint velocity command limit can be changed [here](https://github.com/michaeltobia/sawyer_velctrlsim/blob/master/src/sawyer_vel_ctrl.py#L108-L111),
-though I would **not** recommend setting it much higher than 0.6 rad/sec (where it is now.)
-* Extra detail was put into the comments here in hopes that they
-might help users understand the task-space velocity control pipeline used in
-Dr. Lynch's Modern Robotics, since this type of pipeline is useful for many
-applications.
-* Quick note: intera_core_msgs types are very pick. Make sure you're using python
-standard data types (eg `int()`) and **not** ROS std_msgs message types (eg `Int32()`
-,`Float64()`, ect.)
-when passing data to intera messages.
+* Used in the real world control launch file `vel_ctrl.launch` for the `vr` mode.
+* As mentioned before, joint velocity command limit can be changed [here](https://github.com/michaeltobia/sawyer_velctrlsim/blob/master/src/sawyer_vel_ctrl.py#L108-L111), though I would **not** recommend setting it much higher than **0.6** rad/sec. The control gains can further be adjusted to limit the motion of the manipulator in the code [here](https://github.com/michaeltobia/sawyer_velctrlsim/blob/master/src/sawyer_vel_ctrl.py#L39-L41). The value gains can be tweaked 
+* Quick note: intera_core_msgs types are picky. Make sure you're using python standard data types (eg `int()`) and **not** ROS std_msgs message types (eg `Int32()`,`Float64()`, ect.) when passing data to intera messages.
 
-#### `traj_gen.py`
-* Used in `sim_vel_ctrl.launch` and `sawyer_vel_ctrl.launch`
-* Publishes the desired trajectory to the velocity controller
+#### `sim_vel_ctrl.py`
+* Used in the simulated control launch file `vel_ctrl.launch` for the `sim` mode.
+* Similar to `sawyer_vel_ctrl.py` besides the order of the `/joint_states` order.
+
+#### `traj_gen_sim.py`
+* Used in `vel_ctrl.launch` for the `sim` mode.  
+* Publishes the desired trajectory for the simulated version of the velocity controller.
 * Desired trajectory frame position and rotation can be freely specified in time
  * relative to Sawyer's base frame
  * x_d, y_d, and z_d specify desired position
  * [theta](https://github.com/michaeltobia/sawyer_velctrlsim/blob/ab5f22de727a5c1a07d79cf15d9931acbb78e38b/src/traj_gen.py#L39) specifies the desired rotation magnitude
- * The coefficients in [`q1_d`, `q2_d`, `q3_d`](https://github.com/michaeltobia/sawyer_velctrlsim/blob/master/src/traj_gen.py#L41-L43) specify
- the base axes to rotate about
- * Rotation quaternion can also just be hardcoded in under [`Q_d`](https://github.com/michaeltobia/sawyer_velctrlsim/blob/ab5f22de727a5c1a07d79cf15d9931acbb78e38b/src/traj_gen.py#L44)
+ * The coefficients in [`q1_d`, `q2_d`, `q3_d`](https://github.com/michaeltobia/sawyer_velctrlsim/blob/master/src/traj_gen.py#L41-L43) specify the base axes to rotate about.
+ * Rotation quaternion can also just be hardcoded in under [`Q_d`](https://github.com/michaeltobia/sawyer_velctrlsim/blob/ab5f22de727a5c1a07d79cf15d9931acbb78e38b/src/traj_gen.py#L44).
+
+#### `traj_gen_vr.py`
+* Used in `vel_ctrl.launch` for the `vr` mode. 
+* Publishes the desired trajectory for the teleoperated version of the velocity controller.
+* Desired trajectory frame position and rotation is specified by the pose of the VR headset collected from the correspondent XR Rig component.
 
 #### `vel_ctrl_sim_interface.py`
-* Used by `sim_vel_ctrl.launch`
-* Interpolates and publishes a simulated Sawyer's joints positions based on the
-joint velocity commands from `sim_vel_ctrl.py`
+* Used by `vel_ctrl.launch` for the `sim` mode.
+* Interpolates and publishes a simulated Sawyer's joints positions based on the joint velocity commands from `sim_vel_ctrl.py`.
 
-
-### Future Work and Possible Improvements
-* Video of the real world applied launch files running on sawyer will be added very soon
-* As mentioned above, the force control implemented here is fairly unstable and unreliable,
-there are a few ways to approach this.
- * Pure force control, where the end effector is completely constrained, would not be
- difficult to achieve here. Completely constraining the end effector means there
- are no dynamics to consider, and a torque control can used to control how much
- force is applied at the end effector. Once this is complete, a comparison between
- the accuracy of Sawyer's internal end effector wrench estimation system and the
- external force/torque sensor can be made.
- * Though it would require extensive changes, using torque control for the motion
- control portion of this project would create instant improvements in accuracy and stability
- * Routing the force control through the trajectory generation of the motion control
- is not the traditional way to approach hybrid force-motion control to a robot.
- Typically, constraints are calculated and the force and motion controllers are
- applied in parallel. This would eliminate the problems that can be seen in
- `unidirectional_force_control.launch`. If you are interested in learning more about
- traditional hybrid force-motion control, please see my portfolio post on this
- project here.
- <!-- LINK TO PORTFOLIO POST -->
-* I will also be adding a non force-control trajectory generator that Sawyer can follow
-before engaging the force controller. This will make surface following and
-interaction control much easier and less unpredictable to set up.
+#### `viz_markers.py`
+* Used by `traj_gen.py`.
+* Creates a marker array for trajectory visualisation within the RViz simulator.

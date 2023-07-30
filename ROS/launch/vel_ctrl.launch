@@ -1,0 +1,24 @@
+<launch>
+    <!-- Add the new mode argument with the following options: 'sim', 'vr' -->
+    <arg name="mode" default="sim" />
+
+    <!-- Launch the nodes conditionally based on the value of 'mode' argument -->
+    <group if="$(eval mode == 'sim')">
+        <!-- Nodes launched for the simulation control -->
+        <param name="robot_description" command="$(find xacro)/xacro  --inorder $(find sawyer_description)/urdf/sawyer.urdf.xacro electric_gripper:=true" />    <!-- Load Sawyer's URDF without its electric parallel gripper -->
+        <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />                                                          <!-- Node that publishes Sawyer's state to a tf -->
+        <node name="sim_vel_ctrl" pkg="sawyer_vr_teleop" type="sim_vel_ctrl.py" output="screen"/>                                                               <!-- Node that calculates the velocities necessary to drive Sawyer's joints through the desired end-effector trajectory -->
+        <node name="vel_ctrl_sim_interface" pkg="sawyer_vr_teleop" type="vel_ctrl_sim_interface.py"/>                                                           <!-- Node that declares Sawyer's joint states in the simulation interface -->
+        <node name="ref_trajectory_sim" pkg="sawyer_vr_teleop" type="traj_gen_sim.py" />                                                                        <!-- Node that defines and sets the Sawyer's desired trajectory -->
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find sawyer_vr_teleop)/rviz/sim_vel_ctrl.rviz" required="true"/>                                    <!-- Node to initialise and visualise Sawyer in the rviz simulation interface -->
+    </group>
+
+    <group if="$(eval mode == 'vr')">
+        <!-- Nodes for VR control (NOTE: Initialise Rviz for this mode separately with the robot model and visualisation markers since a predefined file tends to mess up the robot model) -->
+        <node name="sawyer_vel_ctrl" pkg="sawyer_vr_teleop" type="sawyer_vel_ctrl.py"/>           <!-- Node that calculates the velocities necessary to drive Sawyer's joints through the desired end-effector trajectory -->
+        <node name="ref_trajectory_vr" pkg="sawyer_vr_teleop" type="traj_gen_vr.py"/>             <!-- Node that defines and sets the Sawyer's desired trajectory -->
+        <node name="sdk_gripper_vr" pkg="sawyer_vr_teleop" type="gripper_ctrl.py"/>               <!-- Node that controls the electric parallel gripper -->
+    </group>
+</launch>
+
+

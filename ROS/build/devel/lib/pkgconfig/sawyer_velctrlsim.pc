@@ -1,0 +1,8 @@
+prefix=/home/nhantastrew/Workspaces/sawyer_ws/src/sawyer_velctrlsim/build/devel
+
+Name: sawyer_velctrlsim
+Description: Description of sawyer_velctrlsim
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

@@ -1,0 +1,8 @@
+prefix=/home/nhantastrew/Workspaces/sawyer_ws/src/sawyer_robot/sawyer_description/build/devel
+
+Name: sawyer_description
+Description: Description of sawyer_description
+Version: 5.3.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

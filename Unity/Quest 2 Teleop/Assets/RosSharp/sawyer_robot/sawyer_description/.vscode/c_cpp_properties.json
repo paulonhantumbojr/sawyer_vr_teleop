@@ -1,0 +1,28 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/nhantastrew/Workspaces/sawyer_ws/devel/include/**",
+        "/home/nhantastrew/Workspaces/rosbridge_connector/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/nhantastrew/Workspaces/sawyer_ws/src/realsense2_camera/include/**",
+        "/home/nhantastrew/Workspaces/sawyer_ws/src/sawyer_simulator/sawyer_gazebo/include/**",
+        "/home/nhantastrew/Workspaces/sawyer_ws/src/sawyer_simulator/sawyer_hardware_interface/include/**",
+        "/home/nhantastrew/Workspaces/sawyer_ws/src/sawyer_simulator/sawyer_sim_controllers/include/**",
+        "/home/nhantastrew/Workspaces/sawyer_ws/src/sns_ik/sns_ik_lib/include/**",
+        "/home/nhantastrew/Workspaces/sawyer_ws/src/usb_cam/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
