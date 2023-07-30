@@ -4,7 +4,7 @@
 
 ---
 
-<img src="ROS/images/Teleop_setup.png" alt="Eye-in-Hand VR Setup" width="400" height="600">
+<img src="ROS/images/Teleop_setup.png" alt="Eye-in-Hand VR Setup" style="text-align: center;" width="400" height="600">
 
 ## Required Packages
 
@@ -42,7 +42,7 @@ Ideally you want to have two separate devices: one Linux device running the `ROS
 5. The Meta Quest can be run using [Air Link](https://www.meta.com/en-gb/help/quest/articles/headsets-and-accessories/oculus-link/connect-with-air-link/) or [Quest Link](https://www.meta.com/en-gb/help/quest/articles/headsets-and-accessories/oculus-link/connect-link-with-quest-2/). The latter is recommended using The Link cable, unless you have a good Wi-Fi connection to use Air Link. **[W]**
 6. Set up the [Guardian Boundary](https://www.youtube.com/watch?v=GojevL05Avw) of the Meta Quest to match closely to the working envelope of the robot. Ensure that the base height of the boundary is level with Sawyer's base. **[W]**
 
-<img src="ROS/images/VR_area.png" alt="VR Boundary Setup" width="300" height="500">
+<img src="ROS/images/VR_area.png" alt="VR Boundary Setup" style="text-align: center;" width="300" height="500">
 
 7. In `Robotics` -> `ROS Settings`, set the ROS IP Address to match that from your Linux device and the ROS Port to any value you wish to set your connection. To check the IP on Linux, run `hostname -I` in your Terminal. **[W]**
 8. On the ROS side, make sure that everything is configured within the intera workspace previously set up (accessed by running `./intera.sh` within the corresponding ROS workspace). First, configure the ROS TCP endpoint package by running `roslaunch ros_tcp_endpoint endpoint.launch tcp_ip:=your_ip tcp_port:=your_port`. **[L]**
