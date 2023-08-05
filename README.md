@@ -4,7 +4,7 @@
 
 ---
 
-<img src="ROS/images/Teleop_setup.png" alt="Eye-in-Hand VR Setup" style="text-align: center;" width="400" height="600">
+<img src="ROS/images/Teleop_setup.png" alt="Eye-in-Hand VR Setup" style="text-align: center;" width="420" height="600">
 
 ## Required Packages
 
@@ -85,7 +85,7 @@ Ideally, you want to have two separate devices: one Linux device running the `RO
 
  3. **`sdk_gripper_vr`**: Gripper Control. Takes input from the Quest 2 controllers and controls the opening, closing, calibrating, and stopping functionalities of the electric parallel gripper mounted at Sawyer's end-effector. It allows the gripper's control for picking applications while the arm is simultaneously being controlled to generate trajectories.
 
-* A demonstration video is showcased [here](). That said, running this launch file while connected to Sawyer will cause Sawyer to follow the trajectory specified in `traj_gen.py` approximately"exactly  the same way it does in `sim_vel_ctrl.launch`.
+* A demonstration video is showcased [here](https://www.youtube.com/watch?v=hNBtCGlBTSA&list=PLk7u12OaOcUVnV1fom0hz56_Hf_a0wzwc&index=2&t=7s). That said, running this launch file while connected to Sawyer will cause Sawyer to follow the trajectory specified in `traj_gen.py` approximately"exactly  the same way it does in `sim_vel_ctrl.launch`.
 
 ### Script File Details
 
