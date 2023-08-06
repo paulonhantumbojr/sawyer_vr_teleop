@@ -50,7 +50,7 @@ Ideally, you want to have two separate devices: one Linux device running the `RO
 
 <img src="ROS/images/VR_scene.png" alt="Unity VR Scene" width="700" height="350">
 
-10. Run the main [launch](https://github.com/paulonhantumbojr/sawyer_vr_teleop/blob/master/launch/vel_ctrl.launch) file and set the corresponding mode to your setup, either `sim` or `vr`. The full declaration is `roslaunch sawyer_vr_teleop vel_ctrl.launch mode:=[mode here]`. The function of these modes is described in [package details](#Package-Details). **[L]**
+10. Run the main [launch](https://github.com/paulonhantumbojr/sawyer_vr_teleop/blob/master/launch/vel_ctrl.launch) file and set the corresponding mode to your setup, either `sim` or `vr`. The full declaration is `roslaunch sawyer_vr_teleop vel_ctrl.launch mode:=[mode here]`. The function of these modes is described in [Package details](#Package-Details). **[L]**
 11. Set up your dedicated camera sensor in `ROS` and ensure that its corresponding topic is instantiated in the Unity element that displays the image textures. **[W]**
 
 ![Screen Texture Components](ROS/images/CamTex.png)
