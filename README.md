@@ -28,7 +28,11 @@ This package is used to apply task-space velocity dynamics with virtual-reality 
 
 Launch files in this package are set up such that one can utilise Unity's XR Library to augment VR functionalities and remotely control a real robot in real time.
 
-The underlying concepts behind this velocity control approach are primarily referenced from the [sawyer_velctrlsim](https://github.com/michaeltobia/sawyer_velctrlsim) package, along with the teleoperation extension detailed in my [portfolio](https://portfolium.com.au/project/draft/70958).
+The underlying concepts behind this velocity control approach are primarily referenced from the [sawyer_velctrlsim](https://github.com/michaeltobia/sawyer_velctrlsim) package, along with the teleoperation extension detailed in my [portfolio](https://portfolium.com.au/project/draft/70958). 
+
+## Demo
+
+A demonstration of the working project can also be found [here](https://youtu.be/hNBtCGlBTSA).
 
 ## Instructions For Use:
 Ideally, you want to have two separate devices: one Linux device running the `ROS` functionalities, which entail Sawyer's control, and another Windows running `Unity` augmenting the virtual-reality capabilities. Running these simultaneously in a virtual machine is also possible, but I would heavily recommend having a separate device for each to prevent delays and optimise performance.
