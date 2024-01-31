@@ -32,7 +32,7 @@ The underlying concepts behind this velocity control approach are primarily refe
 
 ## Demo
 
-A demonstration of the working project can also be found [here](https://youtu.be/hNBtCGlBTSA).
+A demonstration of the working project can be found [here](https://youtu.be/hNBtCGlBTSA).
 
 ## Instructions For Use:
 Ideally, you want to have two separate devices: one Linux device running the `ROS` functionalities, which entail Sawyer's control, and another Windows running `Unity` augmenting the virtual-reality capabilities. Running these simultaneously in a virtual machine is also possible, but I would heavily recommend having a separate device for each to prevent delays and optimise performance.
